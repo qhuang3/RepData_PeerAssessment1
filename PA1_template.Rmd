@@ -46,3 +46,23 @@ plot(new_daily_total$date, new_daily_total$x,type="h",main="Total steps by date 
 
 
 ```
+
+## Are there differences in activity patterns between weekdays and weekends?
+```{r}
+week_activity <- raw_activity
+week_activity$date <- strptime(week_activity$date,"%Y-%m-%d ")
+week_activity$day <- ""
+for(i in 1:nrow(week_activity)) {
+  row <- week_activity[i,]  
+  week_activity[i,]$day <- if(substring(weekdays(row$date),1,1)=="S") "Weekend" else  "Weekday"
+}
+
+weekday_activity <- week_activity[week_activity$day=="Weekday",]
+weekday_avg <- aggregate(x=weekday_activity$steps, by=list(interval=weekday_activity$interval), FUN="sum")
+plot(weekday_avg$interval, weekday_avg$x,type="l",main="Weekday Average steps by 5 minutes interval", xlab="Interval",ylab="Avg Steps")
+
+weekend_activity <- week_activity[week_activity$day=="Weekend",]
+weekend_avg <- aggregate(x=weekend_activity$steps, by=list(interval=weekend_activity$interval), FUN="sum")
+plot(weekend_avg$interval, weekend_avg$x,type="l",main="Weekend Average steps by 5 minutes interval", xlab="Interval",ylab="Avg Steps")
+
+```
